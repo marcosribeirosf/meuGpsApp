@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,12 +7,63 @@
     tools:context="pooa20171.iff.br.meugps.MainActivity">
 
     <TextView
+        android:id="@+id/txtLatitude"
+        android:text="Latitude atual: "
+        android:textSize="20dp"
+        android:textColor="@color/colorwhite"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content" />
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/txtLongitude"
+        android:text="Longitude atual: "
+        android:textSize="20dp"
+        android:textColor="@color/colorwhite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etxtLatitude"
+            android:hint="LATITUDE"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/etxtLongitude"
+            android:hint="LONGITUDE"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etxtEndereco"
+            android:hint="ENDERECO"
+            android:layout_width="320dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnStart"
+        android:text="start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtInfo"
+        android:text="info"
+        android:textSize="20dp"
+        android:textColor="@color/colorwhite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
