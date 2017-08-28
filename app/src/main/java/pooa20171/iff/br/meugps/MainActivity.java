@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import java.io.IOException;
 import java.util.List;
+import android.widget.EditText;
 
 
 
@@ -28,7 +29,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private TextView txtLatitude, txtLongitude, txtInfo;
     private Button btnStart;
     private GoogleApiClient mGoogleApiClient;
+    private EditText etxtLatitude, etxtLongitude, etxtEndereco;
     private Address endereco;
+
+    private double latitude = 0.0;
+    private double longitude = 0.0;
+    private String end = null;
 
     String[] permissoes = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
@@ -41,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         txtLatitude = (TextView) findViewById(R.id.txtLatitude);
         txtLongitude = (TextView) findViewById(R.id.txtLongitude);
 
+        txtInfo = (TextView) findViewById(R.id.txtInfo);
+        etxtLatitude = (EditText) findViewById(R.id.etxtLatitude);
+        etxtLongitude = (EditText) findViewById(R.id.etxtLongitude);
+        etxtEndereco = (EditText) findViewById(R.id.etxtEndereco);
+
         PermissionUtils.validate(this, 0, permissoes);
 
         callConnection();
@@ -50,21 +61,61 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
 
-                double latitude = -21.762544;
-                double longitude = -41.337933;
-                try {
-                    endereco = buscarEndereco(latitude, longitude);
-                    txtInfo.setText("Cidade: " + endereco.getLocality());
-                } catch (IOException e) {
-                    Log.i("GPS", "Método buscar endereço: " + e.getMessage());
+                if (etxtLatitude.getText().toString().length() != 0){
+                    latitude = Double.parseDouble(etxtLatitude.getText().toString());
+                }
+
+                if (etxtLongitude.getText().toString().length() != 0){
+                    longitude = Double.parseDouble(etxtLongitude.getText().toString());
+                }
+
+                end = etxtEndereco.getText().toString();
+
+                if (end.length() != 0) {
+
+                    try {
+                        endereco = buscarEndereco(end);
+                        txtInfo.setText("Latitude: " + endereco.getLatitude()
+                                + "\nLongitude: " + endereco.getLongitude()
+                        );
+                    } catch (IOException e) {
+                        Log.i("GPS", "Método buscar endereço: " + e.getMessage());
+                    }
+
+                } else {
+
+                    try {
+                        endereco = buscarCoordenadas(latitude, longitude);
+                        txtInfo.setText("Rua: " + endereco.getAddressLine(0));
+                    } catch (IOException e) {
+                        Log.i("GPS", "Método buscar coordenadas: " + e.getMessage());
+                    }
+
                 }
 
             }
+
         });
 
     }
 
-    private Address buscarEndereco(double latitude, double longitude) throws IOException {
+    private Address buscarEndereco(String end) throws IOException {
+
+        Geocoder geocoder;
+        Address address = null;
+        List<Address> addresses;
+
+        geocoder = new Geocoder(getApplicationContext());
+        addresses = geocoder.getFromLocationName(end,1);
+
+        if (addresses.size() > 0) {
+            address = addresses.get(0);
+        }
+        return address;
+
+    }
+
+    private Address buscarCoordenadas(double latitude, double longitude) throws IOException {
 
         Geocoder geocoder;
         Address address = null;
@@ -78,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         return address;
-        
+
     }
 
     private synchronized void callConnection() {
