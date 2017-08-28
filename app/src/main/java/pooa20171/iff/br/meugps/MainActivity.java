@@ -12,18 +12,82 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.TextView;
 import com.google.android.gms.location.LocationServices;
+import android.*;
+import android.Manifest;
+import android.location.Address;
+import android.location.Geocoder;
+import android.view.View;
+import android.widget.Button;
+import java.io.IOException;
+import java.util.List;
 
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private TextView txtLatitude, txtLongitude, txtInfo;
+    private Button btnStart;
     private GoogleApiClient mGoogleApiClient;
+    private Address endereco;
+
+    String[] permissoes = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        txtLatitude = (TextView) findViewById(R.id.txtLatitude);
+        txtLongitude = (TextView) findViewById(R.id.txtLongitude);
+
+        PermissionUtils.validate(this, 0, permissoes);
+
+        callConnection();
+
+        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                double latitude = -21.762544;
+                double longitude = -41.337933;
+                try {
+                    endereco = buscarEndereco(latitude, longitude);
+                    txtInfo.setText("Cidade: " + endereco.getLocality());
+                } catch (IOException e) {
+                    Log.i("GPS", "Método buscar endereço: " + e.getMessage());
+                }
+
+            }
+        });
+
+    }
+
+    private Address buscarEndereco(double latitude, double longitude) throws IOException {
+
+        Geocoder geocoder;
+        Address address = null;
+        List<Address> addresses;
+
+        geocoder = new Geocoder(getApplicationContext());
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+        if (addresses.size() > 0) {
+            address = addresses.get(0);
+        }
+
+        return address;
+        
+    }
+
+    private synchronized void callConnection() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     @Override
